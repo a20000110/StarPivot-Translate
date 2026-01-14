@@ -2,7 +2,7 @@
   "name": "star-pivot-translate",
   "displayName": "StarPivot Translate",
   "description": "选词翻译，快捷键触发，调用指定接口进行翻译",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "publisher": "chenjintao",
   "icon": "logo.png",
   "engines": {
@@ -84,7 +84,8 @@
     "watch": "tsc -watch -p ./",
     "typecheck": "tsc -p ./",
     "lint": "echo \"No lint configured\"",
-    "build": "node scripts/bump-version.js && mkdir -p vsix && vsce package --out vsix --allow-missing-repository"
+    "build": "node scripts/bump-version.js && mkdir -p vsix && vsce package --out vsix --allow-missing-repository",
+    "build:test": "mkdir -p vsix && vsce package --out vsix/star-pivot-translate-1.2.3.vsix --allow-missing-repository"
   },
   "devDependencies": {
     "typescript": "^5.6.3",

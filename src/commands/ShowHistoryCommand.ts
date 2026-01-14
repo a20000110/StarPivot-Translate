@@ -13,7 +13,7 @@ export class ShowHistoryCommand {
      */
     public static async handle(): Promise<void> {
         const history = HistoryService.getInstance().getHistory();
-        
+
         if (history.length === 0) {
             await vscode.window.showInformationMessage("暂无翻译历史");
             return;
