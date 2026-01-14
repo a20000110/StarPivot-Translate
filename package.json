@@ -2,7 +2,7 @@
   "name": "star-pivot-translate",
   "displayName": "StarPivot Translate",
   "description": "选词翻译，快捷键触发，调用指定接口进行翻译",
-  "version": "1.1.0",
+  "version": "1.2.2",
   "publisher": "chenjintao",
   "icon": "logo.png",
   "engines": {
@@ -16,12 +16,6 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "starPivotTranslate.translateSelection",
-        "title": "翻译选区"
-      }
-    ],
     "keybindings": [
       {
         "command": "starPivotTranslate.translateSelection",
@@ -61,9 +55,29 @@
             "ali"
           ],
           "description": "翻译服务商"
+        },
+        "starPivotTranslate.customApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "自定义 API Key (x-custom-api-key)"
+        },
+        "starPivotTranslate.glossary": {
+          "type": "object",
+          "default": {},
+          "description": "术语表 (源文本 -> 目标文本)"
         }
       }
-    }
+    },
+    "commands": [
+      {
+        "command": "starPivotTranslate.translateSelection",
+        "title": "翻译选区"
+      },
+      {
+        "command": "starPivotTranslate.showHistory",
+        "title": "显示翻译历史"
+      }
+    ]
   },
   "scripts": {
     "compile": "tsc -p ./",

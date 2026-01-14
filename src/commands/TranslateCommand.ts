@@ -7,6 +7,9 @@ import { LanguageDetector } from "../core/LanguageDetector";
 import { PickItem } from "../shared/types";
 import { API_URL } from "../env";
 import { LANGUAGES } from "../core/constants";
+import { GlossaryService } from "../core/GlossaryService";
+import { HistoryService } from "../core/HistoryService";
+import { TTSService } from "../core/TTSService";
 
 export class TranslateCommand {
     public static async handle(): Promise<void> {
@@ -20,6 +23,8 @@ export class TranslateCommand {
         const targetLang: string = config.get<string>("starPivotTranslate.targetLanguage") ?? LANGUAGES.EN;
         const apiUrl: string = config.get<string>("starPivotTranslate.apiUrl") || API_URL;
         const vendor: string = config.get<string>("starPivotTranslate.vendor") || "microsoft";
+        const customApiKey: string = config.get<string>("starPivotTranslate.customApiKey") || "";
+        const glossary: Record<string, string> = config.get<Record<string, string>>("starPivotTranslate.glossary") || {};
 
         if (!apiUrl) {
             await vscode.window.showErrorMessage("请配置翻译接口地址");
@@ -47,17 +52,28 @@ export class TranslateCommand {
         qp.show();
 
         try {
-            const adapterConfig: AdapterConfig = { apiUrl };
+            const adapterConfig: AdapterConfig = {
+                apiUrl,
+                customApiKey: customApiKey || undefined
+            };
             const service = TranslationService.getInstance();
+            const historyService = HistoryService.getInstance();
 
             // Parallel requests for all selections
-            const results = await Promise.all(pairs.map(p =>
-                service.translate(p.text, decided.from, decided.to, vendor, adapterConfig)
-                    .then(res => ({ index: p.index, res }))
-                    .catch(err => {
-                        throw err; 
-                    })
-            ));
+            const results = await Promise.all(pairs.map(async p => {
+                const rawRes = await service.translate(p.text, decided.from, decided.to, vendor, adapterConfig);
+
+                // Clone result to avoid mutating cache if glossary changes it
+                const res = { ...rawRes };
+
+                // Apply Glossary (Post-processing)
+                res.translatedText = GlossaryService.postProcess(res.translatedText, glossary);
+
+                // Save to History
+                await historyService.add(res);
+
+                return { index: p.index, res };
+            }));
 
             // Sort by index to ensure order matches pairs
             results.sort((a, b) => a.index - b.index);
@@ -66,14 +82,29 @@ export class TranslateCommand {
             const t0: string = translations[0] ?? "";
 
             qp.placeholder = "选择格式";
+
+            // Define TTS Button
+            const speakButton: vscode.QuickInputButton = {
+                iconPath: new vscode.ThemeIcon('play'),
+                tooltip: '朗读'
+            };
+
             const items: PickItem[] = decided.from === LANGUAGES.EN && decided.to === LANGUAGES.ZH_HANS
-                ? [{ label: t0, description: "原文", value: t0 }]
-                : TextFormatter.buildVariantItems(t0);
+                ? [{ label: t0, description: "原文", value: t0, buttons: [speakButton] }]
+                : TextFormatter.buildVariantItems(t0).map(item => ({ ...item, buttons: [speakButton] }));
 
             qp.items = items;
             let userSelected: boolean = false;
 
             await new Promise<void>((resolve: (value: void | PromiseLike<void>) => void): void => {
+                // Handle TTS Button Click
+                qp.onDidTriggerItemButton((e) => {
+                    const item = e.item as PickItem;
+                    if (e.button === speakButton && item.value) {
+                        TTSService.speak(item.value);
+                    }
+                });
+
                 qp.onDidChangeSelection((items: readonly PickItem[]): void => {
                     userSelected = items.length > 0;
                 });

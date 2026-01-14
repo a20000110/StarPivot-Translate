@@ -24,6 +24,7 @@ export interface ITranslator {
 export interface AdapterConfig {
     apiUrl: string;
     apiKey?: string;
+    customApiKey?: string;
     timeout?: number;
     maxRetries?: number;
     qps?: number;

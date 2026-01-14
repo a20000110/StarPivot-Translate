@@ -7,7 +7,7 @@ import { AdapterConfig } from "../types";
 export abstract class BaseAdapter {
     private static lastRequestTimes: Map<string, number> = new Map();
 
-    constructor(protected config: AdapterConfig) {}
+    constructor(protected config: AdapterConfig) { }
 
     protected async post<T>(fullUrl: string, body: any, headers: Record<string, string> = {}): Promise<T> {
         // Rate Limiting
@@ -47,7 +47,7 @@ export abstract class BaseAdapter {
     private async checkRateLimit(urlStr: string): Promise<void> {
         const qps = this.config.qps ?? 5; // Default 5 QPS for stability
         const interval = 1000 / qps;
-        
+
         let hostname = "unknown";
         try {
             hostname = new URL(urlStr).hostname;
@@ -79,16 +79,22 @@ export abstract class BaseAdapter {
             }
 
             const payload = JSON.stringify(body);
+            const headersToSend: Record<string, string> = {
+                "Content-Type": "application/json",
+                "Content-Length": Buffer.byteLength(payload).toString(),
+                ...headers
+            };
+
+            if (this.config.customApiKey) {
+                headersToSend["x-custom-api-key"] = this.config.customApiKey;
+            }
+
             const requestOptions: https.RequestOptions = {
                 method: "POST",
                 hostname: urlObj.hostname,
                 path: `${urlObj.pathname}${urlObj.search}`,
                 port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
-                headers: {
-                    "Content-Type": "application/json",
-                    "Content-Length": Buffer.byteLength(payload),
-                    ...headers
-                },
+                headers: headersToSend,
                 timeout: this.config.timeout // Apply timeout from config if available
             };
 
