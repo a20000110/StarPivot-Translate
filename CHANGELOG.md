@@ -2,6 +2,17 @@
 
 All notable changes to the "StarPivot Translate" extension will be documented in this file.
 
+## [1.1.0] - 2026-01-14
+
+### Added
+- **缓存机制 (Cache)**: 新增内存缓存功能，默认缓存 24 小时内的翻译结果，减少重复请求，提升响应速度。
+- **智能重试 (Retry)**: 针对网络超时及服务端错误 (5xx) 增加指数退避重试机制（默认 3 次），提高请求成功率。
+- **自动降级 (Auto-switch)**: 当首选翻译引擎连续失败时，自动切换至备选引擎（如 Microsoft -> Ali），保障服务高可用。
+- **并发限流 (Rate Limiting)**: 实现客户端 QPS 限流（默认 5 QPS），避免因高并发触发上游服务限流 (429)。
+
+### Changed
+- **服务层重构**: 引入 `TranslationService` 统一管理翻译流程，透明处理缓存、重试与降级逻辑。
+
 ## [1.0.0] - 2026-01-14
 
 ### Added

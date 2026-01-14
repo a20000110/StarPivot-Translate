@@ -25,4 +25,6 @@ export interface AdapterConfig {
     apiUrl: string;
     apiKey?: string;
     timeout?: number;
+    maxRetries?: number;
+    qps?: number;
 }

@@ -1,6 +1,6 @@
 
 import * as vscode from "vscode";
-import { TranslatorFactory } from "../core/translator/TranslatorFactory";
+import { TranslationService } from "../core/TranslationService";
 import { AdapterConfig, TranslationResult } from "../core/translator/types";
 import { TextFormatter } from "../core/TextFormatter";
 import { LanguageDetector } from "../core/LanguageDetector";
@@ -48,15 +48,14 @@ export class TranslateCommand {
 
         try {
             const adapterConfig: AdapterConfig = { apiUrl };
-            const translator = TranslatorFactory.createTranslator(vendor, adapterConfig);
+            const service = TranslationService.getInstance();
 
             // Parallel requests for all selections
             const results = await Promise.all(pairs.map(p =>
-                translator.translate(p.text, decided.from, decided.to)
+                service.translate(p.text, decided.from, decided.to, vendor, adapterConfig)
                     .then(res => ({ index: p.index, res }))
                     .catch(err => {
-                        throw err; // Fail fast or handle individual error? 
-                        // For now, fail fast to match previous behavior
+                        throw err; 
                     })
             ));
 
@@ -89,39 +88,6 @@ export class TranslateCommand {
                     }
                     qp.hide();
                     const value: string = chosen.value;
-
-                    // Replace all selections?
-                    // Previous code:
-                    // const value: string = chosen.value;
-                    // await editor.edit((builder: vscode.TextEditorEdit): void => {
-                    //    builder.replace(primary.sel, value);
-                    // });
-                    // It only replaced the PRIMARY selection! 
-                    // Wait, look at previous code:
-                    // await editor.edit((builder: vscode.TextEditorEdit): void => {
-                    //    builder.replace(primary.sel, value);
-                    // });
-                    // Yes, it only replaced primary.sel. 
-                    // But pairs had multiple items.
-                    // If user selected multiple ranges, only the first one was replaced?
-                    // That seems like a bug or limitation in previous code.
-                    // But I should preserve behavior or improve it?
-                    // "Translate Selection" usually implies translating all.
-                    // But the "QuickPick" UI forces choosing ONE format for the FIRST translation.
-                    // If I have multiple selections, do I apply that format to ALL?
-                    // If I choose "CamelCase", do I apply CamelCase to all?
-                    // Yes, likely.
-                    // But TextFormatter.buildVariantItems is based on t0 (first translation).
-
-                    // Let's stick to replacing primary for now to match exactly previous behavior, 
-                    // OR improved: replace all with the same style.
-                    // Given v1.0 is "Standardization", I'll stick to matching previous logic 
-                    // but if previous logic was "replace primary", I'll do that.
-                    // Actually, if I look closely at previous code:
-                    // It calculated `translations` (array).
-                    // But `builder.replace(primary.sel, value)` uses `primary.sel`.
-                    // It ignored other translations!
-                    // Okay, I will reproduce that behavior for now.
 
                     await editor.edit((builder: vscode.TextEditorEdit): void => {
                         builder.replace(primary.sel, value);

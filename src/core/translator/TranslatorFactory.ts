@@ -16,14 +16,11 @@ export class TranslatorFactory {
     public static createTranslator(vendor: string, config: AdapterConfig): ITranslator {
         switch (vendor.toLowerCase()) {
             case 'microsoft':
-                return new MicrosoftAdapter(config.apiUrl);
+                return new MicrosoftAdapter(config);
             case 'ali':
-                return new AliAdapter(config.apiUrl);
+                return new AliAdapter(config);
             // Add other cases as adapters are implemented
             default:
-                // Fallback to Microsoft or throw?
-                // For now, if unknown, maybe default to Microsoft as it was the first in list?
-                // Or throw.
                 throw new TranslationError(`Unsupported vendor: ${vendor}`, TranslationErrorCode.VALIDATION_ERROR);
         }
     }
