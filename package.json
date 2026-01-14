@@ -2,7 +2,7 @@
   "name": "star-pivot-translate",
   "displayName": "StarPivot Translate",
   "description": "选词翻译，快捷键触发，调用指定接口进行翻译",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "publisher": "chenjintao",
   "icon": "logo.png",
   "engines": {
@@ -52,6 +52,15 @@
           "type": "string",
           "default": "",
           "description": "翻译接口地址"
+        },
+        "starPivotTranslate.vendor": {
+          "type": "string",
+          "default": "microsoft",
+          "enum": [
+            "microsoft",
+            "ali"
+          ],
+          "description": "翻译服务商"
         }
       }
     }
@@ -61,13 +70,12 @@
     "watch": "tsc -watch -p ./",
     "typecheck": "tsc -p ./",
     "lint": "echo \"No lint configured\"",
-    "build": "mkdir -p vsix && vsce package --out vsix --allow-missing-repository"
+    "build": "node scripts/bump-version.js && mkdir -p vsix && vsce package --out vsix --allow-missing-repository"
   },
   "devDependencies": {
     "typescript": "^5.6.3",
     "@types/node": "^18.19.26",
     "@types/vscode": "^1.84.0",
     "@vscode/vsce": "^3.0.0"
-  },
-  "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a"
+  }
 }

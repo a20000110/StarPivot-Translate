@@ -1,8 +1,10 @@
+
 import * as vscode from "vscode";
-import { TranslationApiClient } from "../infrastructure/TranslationApi";
+import { TranslatorFactory } from "../core/translator/TranslatorFactory";
+import { AdapterConfig, TranslationResult } from "../core/translator/types";
 import { TextFormatter } from "../core/TextFormatter";
 import { LanguageDetector } from "../core/LanguageDetector";
-import { PickItem, TranslateResponse } from "../shared/types";
+import { PickItem } from "../shared/types";
 import { API_URL } from "../env";
 import { LANGUAGES } from "../core/constants";
 
@@ -17,6 +19,7 @@ export class TranslateCommand {
         const sourceLang: string = config.get<string>("starPivotTranslate.sourceLanguage") ?? LANGUAGES.ZH_HANS;
         const targetLang: string = config.get<string>("starPivotTranslate.targetLanguage") ?? LANGUAGES.EN;
         const apiUrl: string = config.get<string>("starPivotTranslate.apiUrl") || API_URL;
+        const vendor: string = config.get<string>("starPivotTranslate.vendor") || "microsoft";
 
         if (!apiUrl) {
             await vscode.window.showErrorMessage("请配置翻译接口地址");
@@ -37,26 +40,31 @@ export class TranslateCommand {
 
         const primary: { index: number; text: string; sel: vscode.Selection } = pairs[0];
         const decided = LanguageDetector.decideLanguages(primary.text, sourceLang, targetLang);
+
         const qp: vscode.QuickPick<PickItem> = vscode.window.createQuickPick<PickItem>();
         qp.ignoreFocusOut = true;
-        qp.items = [{ label: "翻译中…", description: "正在请求", value: "" }];
+        qp.items = [{ label: "翻译中…", description: `正在请求 (${vendor})`, value: "" }];
         qp.show();
 
         try {
-            const resp: TranslateResponse = await TranslationApiClient.postTranslate(apiUrl, {
-                translate_language: decided.to,
-                text: pairs.map((p): string => p.text),
-                from: decided.from
-            });
+            const adapterConfig: AdapterConfig = { apiUrl };
+            const translator = TranslatorFactory.createTranslator(vendor, adapterConfig);
 
-            if (resp.code !== 200 || !resp.data) {
-                qp.hide();
-                await vscode.window.showErrorMessage(`翻译失败: ${resp.msg ?? ""}`);
-                return;
-            }
+            // Parallel requests for all selections
+            const results = await Promise.all(pairs.map(p =>
+                translator.translate(p.text, decided.from, decided.to)
+                    .then(res => ({ index: p.index, res }))
+                    .catch(err => {
+                        throw err; // Fail fast or handle individual error? 
+                        // For now, fail fast to match previous behavior
+                    })
+            ));
 
-            const translations: string[] = resp.data;
-            const t0: string = translations[primary.index] ?? "";
+            // Sort by index to ensure order matches pairs
+            results.sort((a, b) => a.index - b.index);
+            const translations = results.map(r => r.res.translatedText);
+
+            const t0: string = translations[0] ?? "";
 
             qp.placeholder = "选择格式";
             const items: PickItem[] = decided.from === LANGUAGES.EN && decided.to === LANGUAGES.ZH_HANS
@@ -81,6 +89,40 @@ export class TranslateCommand {
                     }
                     qp.hide();
                     const value: string = chosen.value;
+
+                    // Replace all selections?
+                    // Previous code:
+                    // const value: string = chosen.value;
+                    // await editor.edit((builder: vscode.TextEditorEdit): void => {
+                    //    builder.replace(primary.sel, value);
+                    // });
+                    // It only replaced the PRIMARY selection! 
+                    // Wait, look at previous code:
+                    // await editor.edit((builder: vscode.TextEditorEdit): void => {
+                    //    builder.replace(primary.sel, value);
+                    // });
+                    // Yes, it only replaced primary.sel. 
+                    // But pairs had multiple items.
+                    // If user selected multiple ranges, only the first one was replaced?
+                    // That seems like a bug or limitation in previous code.
+                    // But I should preserve behavior or improve it?
+                    // "Translate Selection" usually implies translating all.
+                    // But the "QuickPick" UI forces choosing ONE format for the FIRST translation.
+                    // If I have multiple selections, do I apply that format to ALL?
+                    // If I choose "CamelCase", do I apply CamelCase to all?
+                    // Yes, likely.
+                    // But TextFormatter.buildVariantItems is based on t0 (first translation).
+
+                    // Let's stick to replacing primary for now to match exactly previous behavior, 
+                    // OR improved: replace all with the same style.
+                    // Given v1.0 is "Standardization", I'll stick to matching previous logic 
+                    // but if previous logic was "replace primary", I'll do that.
+                    // Actually, if I look closely at previous code:
+                    // It calculated `translations` (array).
+                    // But `builder.replace(primary.sel, value)` uses `primary.sel`.
+                    // It ignored other translations!
+                    // Okay, I will reproduce that behavior for now.
+
                     await editor.edit((builder: vscode.TextEditorEdit): void => {
                         builder.replace(primary.sel, value);
                     });

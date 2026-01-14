@@ -34,6 +34,7 @@ StarPivot Translate 是一个 VS Code 扩展，专注于为开发者提供高效
 | 配置项 | 类型 | 默认值 | 说明 |
 | :--- | :--- | :--- | :--- |
 | `starPivotTranslate.apiUrl` | `string` | `""` | **(必须)** 翻译服务的 API 接口地址。 |
+| `starPivotTranslate.vendor` | `string` | `"microsoft"` | 选择翻译服务商，可选值：`microsoft`, `ali`。 |
 | `starPivotTranslate.sourceLanguage` | `string` | `"zh-Hans"` | 默认源语言（当自动检测失效时使用）。 |
 | `starPivotTranslate.targetLanguage` | `string` | `"en"` | 默认目标语言（当自动检测失效时使用）。 |
 | `starPivotTranslate.replaceSelection` | `boolean` | `false` | (备用) 是否直接替换选区。 |
