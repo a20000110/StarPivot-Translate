@@ -2,7 +2,15 @@
 import * as vscode from "vscode";
 import { HistoryService, HistoryItem } from "../core/HistoryService";
 
+/**
+ * 显示历史记录命令处理类
+ * 负责处理 'starPivotTranslate.showHistory' 命令
+ */
 export class ShowHistoryCommand {
+    /**
+     * 处理显示历史记录命令
+     * 从 HistoryService 获取记录 -> 显示 QuickPick -> 选中后复制到剪贴板
+     */
     public static async handle(): Promise<void> {
         const history = HistoryService.getInstance().getHistory();
         

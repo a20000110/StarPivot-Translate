@@ -10,22 +10,32 @@ interface AliTranslateResponse {
     msg: string;
 }
 
+/**
+ * 阿里翻译适配器
+ */
 export class AliAdapter extends BaseAdapter implements ITranslator {
     constructor(config: AdapterConfig) {
         super(config);
     }
 
+    /**
+     * 执行翻译
+     * @param text 待翻译文本
+     * @param from 源语言
+     * @param to 目标语言
+     * @returns 翻译结果
+     */
     async translate(text: string, from: string, to: string): Promise<TranslationResult> {
         validateTranslationRequest(text, from, to);
         const cleanBaseUrl = this.config.apiUrl.replace(/\/$/, "");
 
-        // Handle case where user provided full URL instead of base URL
+        // 处理用户提供完整 URL 而非基础 URL 的情况
         const endpoint = "/api/ali_translate";
         const url = cleanBaseUrl.endsWith(endpoint) ? cleanBaseUrl : `${cleanBaseUrl}${endpoint}`;
 
         const body = {
             translate_language: to,
-            text: text, // Ali takes string, not array
+            text: text, // 阿里接口接收字符串，不是数组
             from: from
         };
 
@@ -34,18 +44,18 @@ export class AliAdapter extends BaseAdapter implements ITranslator {
 
             if (response.code !== 200) {
                 throw new TranslationError(
-                    response.msg || "Vendor error",
+                    response.msg || "供应商错误",
                     TranslationErrorCode.VENDOR_ERROR
                 );
             }
 
-            // Assuming response.data is array even for single text, or string?
-            // Existing code handled array.
+            // 假设 response.data 即使是单条文本也是数组，或者是字符串?
+            // 现有代码处理了数组的情况。
             const result = Array.isArray(response.data) ? response.data[0] : response.data;
 
             if (!result) {
                 throw new TranslationError(
-                    "Empty translation result",
+                    "翻译结果为空",
                     TranslationErrorCode.VENDOR_ERROR
                 );
             }
@@ -62,7 +72,7 @@ export class AliAdapter extends BaseAdapter implements ITranslator {
                 throw error;
             }
             throw new TranslationError(
-                "Translation failed",
+                "翻译失败",
                 TranslationErrorCode.UNKNOWN_ERROR,
                 error
             );

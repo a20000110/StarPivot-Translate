@@ -2,25 +2,32 @@
 import { TranslationError, TranslationErrorCode } from "./errors";
 import { normalizeLanguage } from "./languages";
 
+/**
+ * 验证翻译请求参数
+ * @param text 待翻译文本
+ * @param from 源语言
+ * @param to 目标语言
+ * @throws {TranslationError} 当参数无效时抛出
+ */
 export function validateTranslationRequest(text: string, from: string, to: string): void {
     if (!text || text.trim().length === 0) {
-        throw new TranslationError("Text is required", TranslationErrorCode.VALIDATION_ERROR);
+        throw new TranslationError("文本不能为空", TranslationErrorCode.VALIDATION_ERROR);
     }
 
     if (text.length > 500) {
-        throw new TranslationError("Text length exceeds 500 characters limit", TranslationErrorCode.VALIDATION_ERROR);
+        throw new TranslationError("文本长度超过500字符限制", TranslationErrorCode.VALIDATION_ERROR);
     }
 
     if (!normalizeLanguage(from) && from !== 'auto') {
-        // Warning or Error? Plan says "Standard Language Mapping". 
-        // If we want to be strict:
-        // throw new TranslationError(`Unsupported source language: ${from}`, TranslationErrorCode.UNSUPPORTED_LANGUAGE);
-        // But maybe we allow pass-through if the vendor supports it? 
-        // v1.0 says "Input text length check, required fields".
-        // Language mapping is a feature.
+        // 警告或错误? 计划中提到 "标准语言映射"。
+        // 如果我们想严格限制:
+        // throw new TranslationError(`不支持的源语言: ${from}`, TranslationErrorCode.UNSUPPORTED_LANGUAGE);
+        // 但也许我们允许透传，如果供应商支持的话?
+        // v1.0 说 "输入文本长度检查，必填字段"。
+        // 语言映射是一个功能。
     }
 
     if (!normalizeLanguage(to)) {
-        // throw new TranslationError(`Unsupported target language: ${to}`, TranslationErrorCode.UNSUPPORTED_LANGUAGE);
+        // throw new TranslationError(`不支持的目标语言: ${to}`, TranslationErrorCode.UNSUPPORTED_LANGUAGE);
     }
 }

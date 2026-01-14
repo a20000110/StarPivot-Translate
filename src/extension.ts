@@ -3,15 +3,21 @@ import { TranslateCommand } from "./commands/TranslateCommand";
 import { ShowHistoryCommand } from "./commands/ShowHistoryCommand";
 import { HistoryService } from "./core/HistoryService";
 
+/**
+ * 插件激活入口
+ * @param context 扩展上下文
+ */
 export function activate(context: vscode.ExtensionContext): void {
-    // Initialize Services
+    // 初始化服务
     HistoryService.initialize(context);
 
+    // 注册翻译选区命令
     const translateCmd = vscode.commands.registerCommand(
         "starPivotTranslate.translateSelection",
         TranslateCommand.handle
     );
 
+    // 注册显示历史记录命令
     const historyCmd = vscode.commands.registerCommand(
         "starPivotTranslate.showHistory",
         ShowHistoryCommand.handle
@@ -20,4 +26,7 @@ export function activate(context: vscode.ExtensionContext): void {
     context.subscriptions.push(translateCmd, historyCmd);
 }
 
+/**
+ * 插件停用回调
+ */
 export function deactivate(): void { }

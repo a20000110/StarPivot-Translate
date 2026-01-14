@@ -2,10 +2,14 @@
 import * as cp from 'child_process';
 import * as os from 'os';
 
+/**
+ * 文本转语音 (TTS) 服务
+ * 提供跨平台的朗读功能
+ */
 export class TTSService {
     /**
-     * Speak the given text using system TTS capabilities
-     * @param text The text to speak
+     * 使用系统 TTS 能力朗读文本
+     * @param text 待朗读的文本
      */
     public static async speak(text: string): Promise<void> {
         const platform = os.platform();
@@ -14,34 +18,34 @@ export class TTSService {
 
         try {
             if (platform === 'darwin') {
-                // macOS: Use 'say' command
+                // macOS: 使用 'say' 命令
                 command = 'say';
                 args = [text];
             } else if (platform === 'win32') {
-                // Windows: Use PowerShell System.Speech
-                // Escape single quotes for PowerShell
+                // Windows: 使用 PowerShell System.Speech
+                // 为 PowerShell 转义单引号
                 const escapedText = text.replace(/'/g, "''");
                 const psCommand = `Add-Type -AssemblyName System.Speech; $speak = New-Object System.Speech.Synthesis.SpeechSynthesizer; $speak.Speak('${escapedText}')`;
                 
                 command = 'powershell';
                 args = ['-NoProfile', '-Command', psCommand];
             } else {
-                // Linux or others: Not fully supported yet, try 'espeak' if available?
-                // For now, we just log a warning to avoid errors
-                console.warn(`TTS not fully supported on platform: ${platform}`);
+                // Linux 或其他平台: 暂未完全支持，尝试 'espeak' 如果可用?
+                // 目前仅打印警告以避免错误
+                console.warn(`当前平台暂未完全支持 TTS: ${platform}`);
                 return;
             }
 
             if (command) {
-                // Fire and forget, don't await the process
+                // 发送即忘，不等待进程结束
                 const process = cp.spawn(command, args, { stdio: 'ignore' });
-                process.unref(); // Allow the plugin to not wait for this process
+                process.unref(); // 允许插件不等待此进程
                 process.on('error', (err) => {
-                    console.error('TTS execution failed:', err);
+                    console.error('TTS 执行失败:', err);
                 });
             }
         } catch (error) {
-            console.error('Error in TTSService:', error);
+            console.error('TTSService 发生错误:', error);
         }
     }
 }

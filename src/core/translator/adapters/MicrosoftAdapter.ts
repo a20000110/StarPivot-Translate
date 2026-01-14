@@ -10,18 +10,28 @@ interface MicrosoftTranslateResponse {
     msg: string;
 }
 
+/**
+ * 微软翻译适配器
+ */
 export class MicrosoftAdapter extends BaseAdapter implements ITranslator {
     constructor(config: AdapterConfig) {
         super(config);
     }
 
+    /**
+     * 执行翻译
+     * @param text 待翻译文本
+     * @param from 源语言
+     * @param to 目标语言
+     * @returns 翻译结果
+     */
     async translate(text: string, from: string, to: string): Promise<TranslationResult> {
         validateTranslationRequest(text, from, to);
 
-        // Remove trailing slash if present
+        // 如果存在尾部斜杠则移除
         const cleanBaseUrl = this.config.apiUrl.replace(/\/$/, "");
 
-        // Handle case where user provided full URL instead of base URL
+        // 处理用户提供完整 URL 而非基础 URL 的情况
         const endpoint = "/translate-api/translate";
         const url = cleanBaseUrl.endsWith(endpoint) ? cleanBaseUrl : `${cleanBaseUrl}${endpoint}`;
 
@@ -36,14 +46,14 @@ export class MicrosoftAdapter extends BaseAdapter implements ITranslator {
 
             if (response.code !== 200) {
                 throw new TranslationError(
-                    response.msg || "Vendor error",
+                    response.msg || "供应商错误",
                     TranslationErrorCode.VENDOR_ERROR
                 );
             }
 
             if (!response.data || response.data.length === 0) {
                 throw new TranslationError(
-                    "Empty translation result",
+                    "翻译结果为空",
                     TranslationErrorCode.VENDOR_ERROR
                 );
             }
@@ -60,7 +70,7 @@ export class MicrosoftAdapter extends BaseAdapter implements ITranslator {
                 throw error;
             }
             throw new TranslationError(
-                "Translation failed",
+                "翻译失败",
                 TranslationErrorCode.UNKNOWN_ERROR,
                 error
             );

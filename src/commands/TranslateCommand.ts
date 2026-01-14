@@ -11,7 +11,15 @@ import { GlossaryService } from "../core/GlossaryService";
 import { HistoryService } from "../core/HistoryService";
 import { TTSService } from "../core/TTSService";
 
+/**
+ * 翻译命令处理类
+ * 负责处理 'starPivotTranslate.translateSelection' 命令
+ */
 export class TranslateCommand {
+    /**
+     * 处理翻译命令的主入口
+     * 获取选区 -> 决定语言 -> 显示进度 -> 执行翻译 -> 显示结果选项 -> 应用更改
+     */
     public static async handle(): Promise<void> {
         const editor: vscode.TextEditor | undefined = vscode.window.activeTextEditor;
         if (!editor) {
@@ -31,6 +39,7 @@ export class TranslateCommand {
             return;
         }
 
+        // 获取并过滤选区
         const pairs: Array<{ index: number; text: string; sel: vscode.Selection }> = editor.selections
             .map((sel: vscode.Selection, i: number): { index: number; text: string; sel: vscode.Selection } => {
                 const txt: string = editor.document.getText(sel);
@@ -44,8 +53,10 @@ export class TranslateCommand {
         }
 
         const primary: { index: number; text: string; sel: vscode.Selection } = pairs[0];
+        // 自动检测语言方向
         const decided = LanguageDetector.decideLanguages(primary.text, sourceLang, targetLang);
 
+        // 创建并显示 QuickPick
         const qp: vscode.QuickPick<PickItem> = vscode.window.createQuickPick<PickItem>();
         qp.ignoreFocusOut = true;
         qp.items = [{ label: "翻译中…", description: `正在请求 (${vendor})`, value: "" }];
@@ -59,23 +70,23 @@ export class TranslateCommand {
             const service = TranslationService.getInstance();
             const historyService = HistoryService.getInstance();
 
-            // Parallel requests for all selections
+            // 并行处理所有选区的翻译请求
             const results = await Promise.all(pairs.map(async p => {
                 const rawRes = await service.translate(p.text, decided.from, decided.to, vendor, adapterConfig);
 
-                // Clone result to avoid mutating cache if glossary changes it
+                // 克隆结果以避免如果术语表更改它而改变缓存
                 const res = { ...rawRes };
 
-                // Apply Glossary (Post-processing)
+                // 应用术语表 (后处理)
                 res.translatedText = GlossaryService.postProcess(res.translatedText, glossary);
 
-                // Save to History
+                // 保存到历史记录
                 await historyService.add(res);
 
                 return { index: p.index, res };
             }));
 
-            // Sort by index to ensure order matches pairs
+            // 按索引排序以确保顺序与选区匹配
             results.sort((a, b) => a.index - b.index);
             const translations = results.map(r => r.res.translatedText);
 
@@ -83,12 +94,13 @@ export class TranslateCommand {
 
             qp.placeholder = "选择格式";
 
-            // Define TTS Button
+            // 定义朗读按钮
             const speakButton: vscode.QuickInputButton = {
                 iconPath: new vscode.ThemeIcon('play'),
                 tooltip: '朗读'
             };
 
+            // 构建选项列表
             const items: PickItem[] = decided.from === LANGUAGES.EN && decided.to === LANGUAGES.ZH_HANS
                 ? [{ label: t0, description: "原文", value: t0, buttons: [speakButton] }]
                 : TextFormatter.buildVariantItems(t0).map(item => ({ ...item, buttons: [speakButton] }));
@@ -97,7 +109,7 @@ export class TranslateCommand {
             let userSelected: boolean = false;
 
             await new Promise<void>((resolve: (value: void | PromiseLike<void>) => void): void => {
-                // Handle TTS Button Click
+                // 处理朗读按钮点击
                 qp.onDidTriggerItemButton((e) => {
                     const item = e.item as PickItem;
                     if (e.button === speakButton && item.value) {
@@ -120,6 +132,7 @@ export class TranslateCommand {
                     qp.hide();
                     const value: string = chosen.value;
 
+                    // 应用翻译替换
                     await editor.edit((builder: vscode.TextEditorEdit): void => {
                         builder.replace(primary.sel, value);
                     });

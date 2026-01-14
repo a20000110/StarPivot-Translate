@@ -1,4 +1,7 @@
 
+/**
+ * 支持的语言枚举
+ */
 export enum SupportedLanguage {
     ZH = 'zh-Hans',
     EN = 'en',
@@ -8,6 +11,9 @@ export enum SupportedLanguage {
     DE = 'de'
 }
 
+/**
+ * 语言名称映射表 (语言代码 -> 英文显示名称)
+ */
 export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
     [SupportedLanguage.ZH]: 'Chinese (Simplified)',
     [SupportedLanguage.EN]: 'English',
@@ -18,12 +24,12 @@ export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
 };
 
 /**
- * Standardize language code to internal format
- * @param code The language code to normalize
- * @returns SupportedLanguage or undefined if not supported
+ * 将语言代码标准化为内部格式
+ * @param code 待标准化的语言代码
+ * @returns 标准化的 SupportedLanguage 枚举值，如果不支持则返回 undefined
  */
 export function normalizeLanguage(code: string): SupportedLanguage | undefined {
-    // Basic normalization map
+    // 基础标准化映射表
     const map: Record<string, SupportedLanguage> = {
         'zh': SupportedLanguage.ZH,
         'zh-CN': SupportedLanguage.ZH,
