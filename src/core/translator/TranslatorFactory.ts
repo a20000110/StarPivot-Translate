@@ -1,10 +1,8 @@
 
 import { ITranslator, AdapterConfig } from "@/core/translator/types";
 import { MicrosoftAdapter } from "@/core/translator/adapters/MicrosoftAdapter";
-import { AliAdapter } from "@/core/translator/adapters/AliAdapter";
-import { TranslationError, TranslationErrorCode } from "@/core/translator/errors";
 
-export type VendorType = 'microsoft' | 'ali' | 'youdao' | 'tencent' | 'sogou' | 'iciba';
+export type VendorType = 'microsoft';
 
 export class TranslatorFactory {
     /**
@@ -15,14 +13,6 @@ export class TranslatorFactory {
      * @throws {TranslationError} 当服务商不支持时抛出
      */
     public static createTranslator(vendor: string, config: AdapterConfig): ITranslator {
-        switch (vendor.toLowerCase()) {
-            case 'microsoft':
-                return new MicrosoftAdapter(config);
-            case 'ali':
-                return new AliAdapter(config);
-            // 随着适配器的实现添加其他 case
-            default:
-                throw new TranslationError(`不支持的服务商: ${vendor}`, TranslationErrorCode.VALIDATION_ERROR);
-        }
+        return new MicrosoftAdapter(config);
     }
 }

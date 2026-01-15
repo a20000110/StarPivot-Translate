@@ -54,22 +54,7 @@ export class TranslationService {
             this.cache.set(result);
             return result;
         } catch (error) {
-            console.warn(`首选服务商 ${primaryVendor} 失败，尝试降级...`, error);
-
-            // 3. 自动切换 / 降级策略
-            const fallbackVendor = this.getFallbackVendor(primaryVendor);
-            if (fallbackVendor && fallbackVendor !== primaryVendor) {
-                try {
-                    const result = await this.translateWithVendor(text, from, to, fallbackVendor, config);
-                    // 更新结果中的 vendor 字段以匹配实际使用的服务商
-                    const finalResult = { ...result, vendor: fallbackVendor };
-                    this.cache.set(finalResult);
-                    return finalResult;
-                } catch (fallbackError) {
-                    console.warn(`备选服务商 ${fallbackVendor} 失败:`, fallbackError);
-                    throw error; // 抛出原始错误以避免混淆，或者抛出备选错误?
-                }
-            }
+            console.warn(`翻译服务商 ${primaryVendor} 请求失败:`, error);
             throw error;
         }
     }
@@ -92,17 +77,5 @@ export class TranslationService {
     ): Promise<TranslationResult> {
         const translator = TranslatorFactory.createTranslator(vendor, config);
         return await translator.translate(text, from, to);
-    }
-
-    /**
-     * 获取备选服务商
-     * @param current 当前服务商
-     * @returns 备选服务商标识或 null
-     */
-    private getFallbackVendor(current: string): string | null {
-        // 目前简单的在 microsoft 和 ali 之间切换
-        if (current === 'microsoft') return 'ali';
-        if (current === 'ali') return 'microsoft';
-        return null;
     }
 }

@@ -42,7 +42,7 @@ export class TranslateFileCommand {
         const sourceLang: string = config.get<string>("starPivotTranslate.sourceLanguage") ?? LANGUAGES.ZH_HANS;
         const targetLang: string = config.get<string>("starPivotTranslate.targetLanguage") ?? LANGUAGES.EN;
         const apiUrl: string = config.get<string>("starPivotTranslate.apiUrl") || API_URL;
-        const vendor: string = config.get<string>("starPivotTranslate.vendor") || "microsoft";
+        const vendor: string = "microsoft";
         const customApiKey: string = config.get<string>("starPivotTranslate.customApiKey") || "";
         const glossary: Record<string, string> = config.get<Record<string, string>>("starPivotTranslate.glossary") || {};
 

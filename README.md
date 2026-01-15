@@ -48,20 +48,3 @@ StarPivot Translate 是一个 VS Code 扩展，专注于为开发者提供高效
 ## ⌨️ 快捷键
 
 *   `Shift + Alt + T` (Mac: `Shift + Cmd + T`): 触发翻译选区命令。
-
-## 📦 安装与开发
-
-1.  克隆仓库：
-    ```bash
-    git clone <repository-url>
-    ```
-2.  安装依赖：
-    ```bash
-    pnpm install
-    ```
-3.  编译运行：
-    *   按 `F5` 启动 VS Code 调试窗口。
-
-## 📄 License
-
-MIT
