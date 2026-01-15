@@ -1,7 +1,7 @@
 {
   "name": "star-pivot-translate",
   "displayName": "StarPivot Translate",
-  "description": "选词翻译，快捷键触发，调用指定接口进行翻译",
+  "description": "选词翻译，文件命名翻译，快捷键触发",
   "version": "1.2.4",
   "publisher": "chenjintao",
   "icon": "logo.png",
@@ -33,44 +33,10 @@
     "configuration": {
       "title": "StarPivot Translate",
       "properties": {
-        "starPivotTranslate.sourceLanguage": {
+        "starPivotTranslate.shortcut": {
           "type": "string",
-          "default": "zh-Hans",
-          "description": "源语言"
-        },
-        "starPivotTranslate.targetLanguage": {
-          "type": "string",
-          "default": "en",
-          "description": "目标语言"
-        },
-        "starPivotTranslate.replaceSelection": {
-          "type": "boolean",
-          "default": false,
-          "description": "翻译后替换选区文本"
-        },
-        "starPivotTranslate.apiUrl": {
-          "type": "string",
-          "default": "",
-          "description": "翻译接口地址"
-        },
-        "starPivotTranslate.vendor": {
-          "type": "string",
-          "default": "microsoft",
-          "enum": [
-            "microsoft",
-            "ali"
-          ],
-          "description": "翻译服务商"
-        },
-        "starPivotTranslate.customApiKey": {
-          "type": "string",
-          "default": "",
-          "description": "自定义 API Key (x-custom-api-key)"
-        },
-        "starPivotTranslate.glossary": {
-          "type": "object",
-          "default": {},
-          "description": "术语表 (源文本 -> 目标文本)"
+          "default": "Shift+Cmd+T",
+          "markdownDescription": "配置快捷键。 [点击此处编辑快捷键](command:workbench.action.openGlobalKeybindings?%22starPivotTranslate%22) 并检查冲突。"
         }
       }
     },

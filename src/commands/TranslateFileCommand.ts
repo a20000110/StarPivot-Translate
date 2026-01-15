@@ -72,7 +72,7 @@ export class TranslateFileCommand {
         // 创建并显示 QuickPick
         const qp: vscode.QuickPick<PickItem> = vscode.window.createQuickPick<PickItem>();
         qp.ignoreFocusOut = true;
-        qp.items = [{ label: "翻译中…", description: `正在请求 (${vendor})`, value: "" }];
+        qp.items = [{ label: "翻译中…", description: "正在请求", value: "" }];
         qp.show();
 
         try {

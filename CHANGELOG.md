@@ -2,6 +2,15 @@
 
 All notable changes to the "StarPivot Translate" extension will be documented in this file.
 
+## [1.2.4] - 2026-01-15
+
+### Removed
+- **配置项精简**: 移除了 `apiUrl`, `vendor`, `sourceLanguage`, `targetLanguage` 等配置项，统一采用内置默认配置。
+
+### Changed
+- **快捷键配置**: 新增快捷键配置引导，支持通过设置页面快速跳转至快捷键编辑器进行修改及冲突检测。
+- **UI 优化**: 移除了翻译加载状态中的厂商信息（如 "Microsoft"）。
+
 ## [1.2.3] - 2026-01-15
 
 ### Changed

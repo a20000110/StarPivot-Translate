@@ -16,9 +16,12 @@ StarPivot Translate 是一个 VS Code 扩展，专注于为开发者提供高效
         *   `UPPER_CASE` (全大写)
         *   以及更多...
 *   **快捷键触发**：默认绑定 `Shift + Alt + T` (Mac: `Shift + Cmd + T`)，快速唤起。
+*   **文件名翻译**：支持在资源管理器中直接翻译并重命名文件。
 *   **自定义接口**：支持配置私有翻译 API 服务。
 
 ## 🚀 使用方法
+
+### 文本翻译
 
 1.  在编辑器中选中一段文本（例如：`用户登录` 或 `user login`）。
 2.  按下快捷键 `Shift + Alt + T` (Mac: `Shift + Cmd + T`)（或在命令面板执行 `翻译选区`）。
@@ -27,41 +30,20 @@ StarPivot Translate 是一个 VS Code 扩展，专注于为开发者提供高效
     *   回车确认，原文将被替换。
 4.  **英文转中文时**：直接显示中文翻译结果，回车替换。
 
+### 文件名翻译
+
+1.  在 VS Code 侧边栏资源管理器中，选中需要重命名的文件。
+2.  按下快捷键 `Shift + Alt + T` (Mac: `Shift + Cmd + T`)（或右键菜单选择 `翻译文件名`）。
+3.  在顶部弹出的列表选择合适的翻译结果（支持驼峰、下划线等格式）。
+4.  回车确认，文件将被自动重命名。
+
 ## ⚙️ 配置说明
 
-在 VS Code 设置 (`settings.json`) 中可配置以下选项：
+您可以在设置中查看或修改快捷键配置。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-| :--- | :--- | :--- | :--- |
-| `starPivotTranslate.apiUrl` | `string` | `""` | **(必须)** 翻译服务的 API 接口地址。 |
-| `starPivotTranslate.vendor` | `string` | `"microsoft"` | 选择翻译服务商，可选值：`microsoft`, `ali`。 |
-| `starPivotTranslate.sourceLanguage` | `string` | `"zh-Hans"` | 默认源语言（当自动检测失效时使用）。 |
-| `starPivotTranslate.targetLanguage` | `string` | `"en"` | 默认目标语言（当自动检测失效时使用）。 |
-| `starPivotTranslate.replaceSelection` | `boolean` | `false` | (备用) 是否直接替换选区。 |
-
-### API 接口规范
-
-本插件需要配合后端翻译服务使用。如果您配置了自己的 `apiUrl`，请确保接口满足以下规范：
-
-**请求 (POST):**
-
-```json
-{
-  "translate_language": "en", // 目标语言
-  "text": ["需要翻译的内容"],   // 文本数组
-  "from": "zh-Hans"           // 源语言
-}
-```
-
-**响应:**
-
-```json
-{
-  "code": 200,
-  "data": ["Translated Content"],
-  "msg": "success"
-}
-```
+| 配置项 | 说明 |
+| :--- | :--- |
+| `starPivotTranslate.shortcut` | 快捷键配置指引（点击设置中的链接可跳转至快捷键编辑器）。 |
 
 ## ⌨️ 快捷键
 
