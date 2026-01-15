@@ -2,7 +2,7 @@
 
 All notable changes to the "StarPivot Translate" extension will be documented in this file.
 
-## [1.2.4] - 2026-01-15
+## [1.2.5] - 2026-01-15
 
 ### Removed
 - **配置项精简**: 移除了 `apiUrl`, `vendor`, `sourceLanguage`, `targetLanguage` 等配置项，统一采用内置默认配置。

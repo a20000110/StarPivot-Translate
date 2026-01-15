@@ -2,7 +2,7 @@
   "name": "star-pivot-translate",
   "displayName": "StarPivot Translate",
   "description": "选词翻译，文件命名翻译，快捷键触发",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "publisher": "chenjintao",
   "icon": "logo.png",
   "engines": {
