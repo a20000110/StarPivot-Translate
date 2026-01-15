@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
-import { TranslateCommand } from "./commands/TranslateCommand";
-import { ShowHistoryCommand } from "./commands/ShowHistoryCommand";
-import { HistoryService } from "./core/HistoryService";
+import { TranslateCommand } from "@/commands/TranslateCommand";
+import { TranslateFileCommand } from "@/commands/TranslateFileCommand";
+import { ShowHistoryCommand } from "@/commands/ShowHistoryCommand";
+import { HistoryService } from "@/core/HistoryService";
 
 /**
  * 插件激活入口
@@ -17,13 +18,19 @@ export function activate(context: vscode.ExtensionContext): void {
         TranslateCommand.handle
     );
 
+    // 注册翻译文件名命令
+    const translateFileCmd = vscode.commands.registerCommand(
+        "starPivotTranslate.translateFile",
+        TranslateFileCommand.handle
+    );
+
     // 注册显示历史记录命令
     const historyCmd = vscode.commands.registerCommand(
         "starPivotTranslate.showHistory",
         ShowHistoryCommand.handle
     );
 
-    context.subscriptions.push(translateCmd, historyCmd);
+    context.subscriptions.push(translateCmd, translateFileCmd, historyCmd);
 }
 
 /**

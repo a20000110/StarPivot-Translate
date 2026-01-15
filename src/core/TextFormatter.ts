@@ -1,5 +1,5 @@
-import { capitalize, wordsOf } from "../shared/utils";
-import { VariantItem } from "../shared/types";
+import { capitalize, wordsOf } from "@/shared/utils";
+import { VariantItem } from "@/shared/types";
 
 /**
  * 文本格式化工具类

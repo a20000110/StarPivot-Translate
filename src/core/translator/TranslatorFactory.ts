@@ -1,8 +1,8 @@
 
-import { ITranslator, AdapterConfig } from "./types";
-import { MicrosoftAdapter } from "./adapters/MicrosoftAdapter";
-import { AliAdapter } from "./adapters/AliAdapter";
-import { TranslationError, TranslationErrorCode } from "./errors";
+import { ITranslator, AdapterConfig } from "@/core/translator/types";
+import { MicrosoftAdapter } from "@/core/translator/adapters/MicrosoftAdapter";
+import { AliAdapter } from "@/core/translator/adapters/AliAdapter";
+import { TranslationError, TranslationErrorCode } from "@/core/translator/errors";
 
 export type VendorType = 'microsoft' | 'ali' | 'youdao' | 'tencent' | 'sogou' | 'iciba';
 

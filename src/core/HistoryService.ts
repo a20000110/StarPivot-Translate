@@ -1,6 +1,6 @@
 
 import * as vscode from "vscode";
-import { TranslationResult } from "./translator/types";
+import { TranslationResult } from "@/core/translator/types";
 
 export interface HistoryItem extends TranslationResult {
     /** 时间戳 */

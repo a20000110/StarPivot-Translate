@@ -1,8 +1,8 @@
 
-import { BaseAdapter } from "./BaseAdapter";
-import { ITranslator, TranslationResult, AdapterConfig } from "../types";
-import { TranslationError, TranslationErrorCode } from "../errors";
-import { validateTranslationRequest } from "../validation";
+import { BaseAdapter } from "@/core/translator/adapters/BaseAdapter";
+import { ITranslator, TranslationResult, AdapterConfig } from "@/core/translator/types";
+import { TranslationError, TranslationErrorCode } from "@/core/translator/errors";
+import { validateTranslationRequest } from "@/core/translator/validation";
 
 interface MicrosoftTranslateResponse {
     data: string[];

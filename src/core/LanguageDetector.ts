@@ -1,6 +1,6 @@
-import { containsChinese, containsLatinLetters } from "../shared/utils";
-import { LanguagePair } from "../shared/types";
-import { LANGUAGES } from "./constants";
+import { containsChinese, containsLatinLetters } from "@/shared/utils";
+import { LanguagePair } from "@/shared/types";
+import { LANGUAGES } from "@/core/constants";
 
 /**
  * 语言检测器

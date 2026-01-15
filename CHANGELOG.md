@@ -2,6 +2,11 @@
 
 All notable changes to the "StarPivot Translate" extension will be documented in this file.
 
+## [1.2.3] - 2026-01-15
+
+### Changed
+- **快捷键调整**: Mac 平台默认快捷键调整为 `Shift + Cmd + T`。
+
 ## [1.1.0] - 2026-01-14
 
 ### Added

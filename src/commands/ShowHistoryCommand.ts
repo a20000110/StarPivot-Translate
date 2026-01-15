@@ -1,6 +1,6 @@
 
 import * as vscode from "vscode";
-import { HistoryService, HistoryItem } from "../core/HistoryService";
+import { HistoryService, HistoryItem } from "@/core/HistoryService";
 
 /**
  * 显示历史记录命令处理类

@@ -1,6 +1,6 @@
 
-import { TranslationError, TranslationErrorCode } from "./errors";
-import { normalizeLanguage } from "./languages";
+import { TranslationError, TranslationErrorCode } from "@/core/translator/errors";
+import { normalizeLanguage } from "@/core/translator/languages";
 
 /**
  * 验证翻译请求参数

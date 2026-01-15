@@ -1,5 +1,5 @@
 
-import { TranslationResult } from "./types";
+import { TranslationResult } from "@/core/translator/types";
 import * as crypto from 'crypto';
 
 interface CacheEntry {

@@ -1,15 +1,15 @@
 
 import * as vscode from "vscode";
-import { TranslationService } from "../core/TranslationService";
-import { AdapterConfig, TranslationResult } from "../core/translator/types";
-import { TextFormatter } from "../core/TextFormatter";
-import { LanguageDetector } from "../core/LanguageDetector";
-import { PickItem } from "../shared/types";
-import { API_URL } from "../env";
-import { LANGUAGES } from "../core/constants";
-import { GlossaryService } from "../core/GlossaryService";
-import { HistoryService } from "../core/HistoryService";
-import { TTSService } from "../core/TTSService";
+import { TranslationService } from "@/core/TranslationService";
+import { AdapterConfig, TranslationResult } from "@/core/translator/types";
+import { TextFormatter } from "@/core/TextFormatter";
+import { LanguageDetector } from "@/core/LanguageDetector";
+import { PickItem } from "@/shared/types";
+import { API_URL } from "@/env";
+import { LANGUAGES } from "@/core/constants";
+import { GlossaryService } from "@/core/GlossaryService";
+import { HistoryService } from "@/core/HistoryService";
+import { TTSService } from "@/core/TTSService";
 
 /**
  * 翻译命令处理类

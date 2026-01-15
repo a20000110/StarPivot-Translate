@@ -1,7 +1,7 @@
 
-import { TranslatorFactory } from "./translator/TranslatorFactory";
-import { TranslationResult, AdapterConfig } from "./translator/types";
-import { TranslationCache } from "./translator/TranslationCache";
+import { TranslatorFactory } from "@/core/translator/TranslatorFactory";
+import { TranslationResult, AdapterConfig } from "@/core/translator/types";
+import { TranslationCache } from "@/core/translator/TranslationCache";
 
 /**
  * 翻译服务核心类 (单例模式)
@@ -36,10 +36,10 @@ export class TranslationService {
      * @returns 翻译结果 Promise
      */
     public async translate(
-        text: string, 
-        from: string, 
-        to: string, 
-        primaryVendor: string, 
+        text: string,
+        from: string,
+        to: string,
+        primaryVendor: string,
         config: AdapterConfig
     ): Promise<TranslationResult> {
         // 1. 检查缓存
@@ -55,11 +55,11 @@ export class TranslationService {
             return result;
         } catch (error) {
             console.warn(`首选服务商 ${primaryVendor} 失败，尝试降级...`, error);
-            
+
             // 3. 自动切换 / 降级策略
             const fallbackVendor = this.getFallbackVendor(primaryVendor);
             if (fallbackVendor && fallbackVendor !== primaryVendor) {
-                 try {
+                try {
                     const result = await this.translateWithVendor(text, from, to, fallbackVendor, config);
                     // 更新结果中的 vendor 字段以匹配实际使用的服务商
                     const finalResult = { ...result, vendor: fallbackVendor };
@@ -84,10 +84,10 @@ export class TranslationService {
      * @returns 翻译结果
      */
     private async translateWithVendor(
-        text: string, 
-        from: string, 
-        to: string, 
-        vendor: string, 
+        text: string,
+        from: string,
+        to: string,
+        vendor: string,
         config: AdapterConfig
     ): Promise<TranslationResult> {
         const translator = TranslatorFactory.createTranslator(vendor, config);

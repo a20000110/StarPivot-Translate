@@ -1,8 +1,8 @@
 
 import https from "https";
 import { URL } from "url";
-import { TranslationError, TranslationErrorCode } from "../errors";
-import { AdapterConfig } from "../types";
+import { TranslationError, TranslationErrorCode } from "@/core/translator/errors";
+import { AdapterConfig } from "@/core/translator/types";
 
 /**
  * 基础适配器抽象类

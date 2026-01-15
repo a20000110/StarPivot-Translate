@@ -1,5 +1,5 @@
 
-import { TranslationError } from "./errors";
+import { TranslationError } from "@/core/translator/errors";
 
 /**
  * 翻译结果接口
